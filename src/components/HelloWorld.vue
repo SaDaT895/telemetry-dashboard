@@ -5,7 +5,11 @@
         <RouterLink to="/about">
           <v-img :src="require('../assets/logo.svg')" class="my-3" contain height="200" />
         </RouterLink>
-        <VCard>Hello</VCard>
+        <VCard>
+          <RouterLink to="/lap">
+            Go to laps
+          </RouterLink>
+        </VCard>
       </v-col>
     </v-row>
   </v-container>
