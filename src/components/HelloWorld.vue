@@ -10,15 +10,28 @@
             Go to laps
           </RouterLink>
         </VCard>
+        <v-btn color="primary" @click="dialog = true">Upload</v-btn>
+        <v-dialog v-model="dialog" max-width="500px" transition="dialog-transition">
+          <v-card>
+            <v-card-text>
+              Upload files here
+            </v-card-text>
+            <v-card-actions>
+              <v-btn color="primary" block @click="dialog = false">Close Dialog</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script lang='ts'>
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  name: 'HelloWorld'
-})
+export default {
+  data () {
+    return {
+      dialog: false
+    }
+  }
+}
 </script>
