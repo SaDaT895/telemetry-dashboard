@@ -8,14 +8,13 @@
     </v-container>
 </template>
 
-
 <script lang="ts">
 
 export default {
-    data() {
-        return {
-            
-        }
+  data () {
+    return {
+
     }
+  }
 }
 </script>

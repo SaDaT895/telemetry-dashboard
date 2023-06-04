@@ -21,7 +21,7 @@
     </v-row>
 
     <v-row>
-      
+
     </v-row>
   </v-container>
 </template>
