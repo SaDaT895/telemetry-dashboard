@@ -7,3 +7,15 @@
         </v-row>
     </v-container>
 </template>
+
+
+<script lang="ts">
+
+export default {
+    data() {
+        return {
+            
+        }
+    }
+}
+</script>

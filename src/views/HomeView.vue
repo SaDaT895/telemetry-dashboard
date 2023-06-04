@@ -1,10 +1,11 @@
 <template>
   <v-container grid-list-xs>
-    <v-row>
-      <v-col cols="6">
+
+    <v-row id="header">
+      <v-col id="title" cols="6">
         <h1 class="text-orange">Telemetry Dashboard</h1>
       </v-col>
-      <v-col class="text-right">
+      <v-col id="uploadBtn" class="text-right">
          <v-btn color="primary" append-icon="mdi-upload" @click="dialog = true">Upload</v-btn>
           <v-dialog v-model="dialog" max-width="500px" transition="dialog-transition">
             <v-card title="Upload files" subtitle="session.csv,car.csv,lap.csv,track.csv">
@@ -17,6 +18,10 @@
             </v-card>
           </v-dialog>
       </v-col>
+    </v-row>
+
+    <v-row>
+      
     </v-row>
   </v-container>
 </template>
