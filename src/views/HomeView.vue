@@ -10,7 +10,7 @@
         <v-dialog v-model="dialog" max-width="500px" transition="dialog-transition">
           <v-card title="Upload files" subtitle="session.csv,car.csv,lap.csv,track.csv">
             <v-card-text>
-              <v-form @submit.prevent>
+              <v-form @submit.prevent="show=true">
                 <v-file-input accept=".csv" density="compact" label="Upload CSV data" small-chips @change='handleFile($event.target.files[0])'></v-file-input>
                 <v-btn type="submit">Submit</v-btn>
               </v-form>
@@ -23,29 +23,28 @@
       </v-col>
     </v-row>
 
-    <v-row>
-
+    <v-row v-if="show">
+      Telemetry loaded ✔️
+      {{ telemetry.car[0] }}
     </v-row>
   </v-container>
 </template>
 
 <script lang="ts">
-import Papa from 'papaparse'
+import { telemetry } from '@/store'
+import { handleFile } from '@/index'
 
 export default {
   data () {
     return {
-      dialog: false
+      dialog: false,
+      show: false,
+      telemetry
     }
   },
 
   methods: {
-    handleFile (file: File) {
-      Papa.parse(file, {
-        header: true,
-        complete: (res) => console.log(res)
-      })
-    }
+    handleFile
   }
 }
 </script>
