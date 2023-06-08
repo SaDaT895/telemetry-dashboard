@@ -19,7 +19,6 @@ export const handleFiles = (event: Event) => {
         if (res.meta.fields) {
           const key = validation[res.meta.fields.length] as keyof typeof telemetry
           telemetry[key] = structuredClone(res.data as never[])
-          console.log(telemetry[key])
         }
       }
     })
