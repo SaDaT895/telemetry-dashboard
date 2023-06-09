@@ -1,5 +1,9 @@
 import { telemetry } from './store'
 import Papa from 'papaparse'
+import dayjs from 'dayjs'
+import duration from 'dayjs/plugin/duration'
+
+dayjs.extend(duration)
 
 export const handleFiles = (event: Event) => {
   const files = (event.target as HTMLInputElement).files
@@ -15,13 +19,18 @@ export const handleFiles = (event: Event) => {
         return header.replace(' ', '_')
       },
       dynamicTyping: true,
+      skipEmptyLines: true,
       complete: (res) => {
         if (res.meta.fields) {
           const key = validation[res.meta.fields.length] as keyof typeof telemetry.data
           telemetry.data[key] = structuredClone(res.data as never[])
-          Object.entries(telemetry.data).map((val) => console.log(val[1].length))
+          console.log(key)
         }
       }
     })
   }
+}
+
+export const getLapTime = (time: number) => {
+  return dayjs.duration(time).format('m:ss:SSS')
 }

@@ -4,7 +4,7 @@ export const telemetry = reactive({
   data: {
     car: [],
     session: [],
-    lap: [],
+    lap: [] as Array<any>,
     tyre: [],
     input: []
   },
