@@ -10,13 +10,13 @@
         <v-dialog v-model="dialog" max-width="500px" transition="dialog-transition">
           <v-card title="Upload files" subtitle="session.csv,car.csv,lap.csv,track.csv">
             <v-card-text>
-              <v-form @submit.prevent="submit">
-                <v-file-input accept=".csv" density="compact" label="Upload CSV data" multiple small-chips @change='handleFiles'></v-file-input>
+              <v-form @submit.prevent="dialog = false">
+                <v-file-input accept=".csv" density="compact" label="Upload CSV data" multiple small-chips @change='handleChange'></v-file-input>
                 <v-btn type="submit">Submit</v-btn>
               </v-form>
             </v-card-text>
             <v-card-actions>
-              <v-btn color="primary" @click="dialog = false">Close Dialog</v-btn>
+              <v-progress-circular v-if="loading" indeterminate></v-progress-circular>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -25,7 +25,7 @@
 
     <v-row v-if="show">
       Telemetry loaded ✔️
-      {{ telemetry.session }}
+      {{ telemetry.data.session[0] }}
     </v-row>
   </v-container>
 </template>
@@ -40,12 +40,16 @@ export default defineComponent({
     return {
       dialog: false,
       show: false,
+      loading: false,
       telemetry
     }
   },
 
   methods: {
-    handleFiles,
+    handleChange (event: Event) {
+      this.loading = true
+      handleFiles(event)
+    },
     submit () {
       this.dialog = false
       this.show = true
