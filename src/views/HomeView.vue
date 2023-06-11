@@ -14,7 +14,7 @@
         <v-card>
           <v-card-title>{{ telemetry.data.session[0]?.car }}</v-card-title>
           <v-card-subtitle>CAR</v-card-subtitle>
-          <v-card-item>Info goes here</v-card-item>
+          <v-card-item>{{ fastestLap }}</v-card-item>
         </v-card>
         <br>
         <v-card>
@@ -30,7 +30,7 @@
       </v-col>
       <v-col cols="4">
         <v-card v-for="lap in lapCountArray" :key="lap" class='my-5'>
-          <v-card-title>Lap {{ lap }}</v-card-title>
+          <v-card-title><router-link :to="`/lap/${lap}`"> Lap {{ lap }}</router-link></v-card-title>
           <v-card-item>{{ telemetry.data.lap.findLast(e => e.lap_count === lap) }}</v-card-item>
         </v-card>
       </v-col>
@@ -56,7 +56,7 @@
 
 <script lang="ts">
 import { telemetry } from '@/store'
-import { getLapTime, handleFiles } from '@/index'
+import { getLapTime, handleFiles, parsecsv } from '@/index'
 import { defineComponent } from 'vue'
 
 export default defineComponent({
@@ -71,6 +71,9 @@ export default defineComponent({
   computed: {
     lapCountArray () {
       return Array.from({ length: telemetry.data.lap.at(-1)?.lap_count }, (_, i) => i + 1)
+    },
+    fastestLap () {
+      return telemetry.data.lap.at(-1).best_lap
     }
   },
   methods: {

@@ -13,7 +13,7 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes: [
     { path: '/', component: HomeViewVue },
-    { path: '/lap', component: LapViewVue },
+    { path: '/lap/:id', component: LapViewVue, props: true },
     { path: '/about', component: AboutViewVue }
   ]
 })

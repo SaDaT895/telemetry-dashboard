@@ -2,8 +2,17 @@ import { telemetry } from './store'
 import Papa from 'papaparse'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
+import * as d3 from 'd3'
 
 dayjs.extend(duration)
+const reader = new FileReader()
+
+export const parsecsv = (file: File) => {
+  reader.readAsText(file)
+  reader.onload = (e) => {
+    return e
+  }
+}
 
 export const handleFiles = (event: Event) => {
   const files = (event.target as HTMLInputElement).files
@@ -13,6 +22,7 @@ export const handleFiles = (event: Event) => {
   const validation = Object.fromEntries(fieldSize.map((v, i) => [v, Object.keys(telemetry.data)[i]]))
 
   for (const file of files) {
+    console.log(parsecsv(file))
     Papa.parse(file, {
       header: true,
       transformHeader (header) {
