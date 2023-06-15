@@ -9,7 +9,7 @@
       </v-col>
     </v-row>
 
-    <v-row justify='stretch' v-if="telemetry.loaded()">
+    <v-row v-if="telemetry.loaded()">
       <v-col cols="4">
         <v-card>
           <v-card-title>{{ telemetry.data.session[0]?.car }}</v-card-title>
@@ -56,7 +56,7 @@
 
 <script lang="ts">
 import { telemetry } from '@/store'
-import { getLapTime, handleFiles, parsecsv } from '@/index'
+import { getLapTime, handleFiles, lapCountArray } from '@/index'
 import { defineComponent } from 'vue'
 
 export default defineComponent({
@@ -69,12 +69,10 @@ export default defineComponent({
     }
   },
   computed: {
-    lapCountArray () {
-      return Array.from({ length: telemetry.data.lap.at(-1)?.lap_count }, (_, i) => i + 1)
-    },
     fastestLap () {
       return telemetry.data.lap.at(-1).best_lap
-    }
+    },
+    lapCountArray
   },
   methods: {
     handleChange (event: Event) {

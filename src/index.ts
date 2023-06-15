@@ -22,7 +22,6 @@ export const handleFiles = (event: Event) => {
   const validation = Object.fromEntries(fieldSize.map((v, i) => [v, Object.keys(telemetry.data)[i]]))
 
   for (const file of files) {
-    console.log(parsecsv(file))
     Papa.parse(file, {
       header: true,
       transformHeader (header) {
@@ -41,6 +40,15 @@ export const handleFiles = (event: Event) => {
   }
 }
 
+export const lapCountArray = () => {
+  return Array.from({ length: telemetry.data.lap.at(-1)?.lap_count }, (_, i) => i + 1)
+}
+
 export const getLapTime = (time: number) => {
   return dayjs.duration(time).format('m:ss:SSS')
+}
+
+export const getLapData = (lap: number) => {
+  console.log(lap)
+  return telemetry.data.lap.filter(v => v.lap_count === lap)
 }

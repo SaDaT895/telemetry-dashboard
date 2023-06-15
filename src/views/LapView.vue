@@ -1,21 +1,86 @@
 <template>
-    <v-container>
-        <v-row class="text-center">
-          <v-col>
-            {{ id }}
-          </v-col>
-        </v-row>
-    </v-container>
+  <v-container>
+
+    <v-row>
+      <v-col id="title" cols="6">
+        <h1 class="text-orange">Lap {{ id }} of {{ lapCountArray.length }}</h1>
+      </v-col>
+      <v-col id="uploadBtn" class="text-right">
+        <router-link to="/" custom v-slot="{navigate}">
+          <v-btn color="primary" append-icon="mdi-home" @click="navigate">Go Back</v-btn>
+        </router-link>
+      </v-col>
+    </v-row>
+
+    <v-row justify='center' align-items='center'>
+      <v-col cols="3">
+        <v-card>
+          <v-card-item>
+            <v-img src="@/assets/map.png"></v-img>
+            <v-card-subtitle>INTERACTIVE TRACK MAP</v-card-subtitle>
+          </v-card-item>
+          <v-card-text>
+            Time: {{ getLapTime(lapData[10000]?.current_lap) }}
+            <br>
+            Speed: {{ telemetry.data.car.find(v => v.timestamp === lapData[10000]?.timestamp)?.speed }}
+            <br>
+            Gear: {{ telemetry.data.car.find(v => v.timestamp === lapData[10000]?.timestamp)?.gear }}
+            <br>
+            Location: {{ lapData[10000]?.lap_position }}
+            <br>
+            Valid: {{ (lapData.at(-1)?.invalid) === "False" }}
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col>
+        <line-chart :chart-data="graphData()" :chart-options="{
+          scales: {
+             xAxis: {
+              ticks: {
+                maxTicksLimit: 10
+              }
+            }
+          }}"></line-chart>
+      </v-col>
+    </v-row>
+
+  </v-container>
 </template>
 
 <script lang="ts">
+import { telemetry } from '@/store'
+import { getLapData, lapCountArray, getLapTime } from '..'
+import { defineComponent } from 'vue'
+import LineChart from '@/components/LineChart.vue'
 
-export default {
+export default defineComponent({
   props: ['id'],
   data () {
     return {
-
+      telemetry
     }
+  },
+  computed: {
+    lapData () {
+      const lapNo = Number(this.id!)
+      return getLapData(lapNo)
+    },
+    lapCountArray
+  },
+  methods: {
+    getLapData,
+    getLapTime,
+    graphData () {
+      const startIdx = telemetry.data.car.findIndex(c => c.timestamp === this.lapData[0].timestamp)
+      const carData = telemetry.data.car.slice(startIdx, startIdx + this.lapData.length).map(c => c.speed)
+      const dataset = this.lapData.map((v, i) => carData[i])
+      const labels = this.lapData.map(v => v.lap_position)
+      console.log(dataset)
+      return { labels: labels, datasets: [{ backgroundColor: '#EA7431', data: dataset, label: 'Speed' }] }
+    }
+  },
+  components: {
+    LineChart
   }
-}
+})
 </script>
