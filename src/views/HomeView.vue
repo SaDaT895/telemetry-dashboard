@@ -12,18 +12,16 @@
     <v-row v-if="telemetry.loaded()">
       <v-col cols="4">
         <v-card>
-          <v-card-title>{{ telemetry.data.session[0]?.car }}</v-card-title>
+          <v-card-title>{{ car }}</v-card-title>
           <v-card-subtitle>CAR</v-card-subtitle>
           <v-card-item>Best Lap: {{ fastestLap }}</v-card-item>
         </v-card>
         <br>
         <v-card>
-          <v-card-title>{{ telemetry.data.session[0]?.track }}</v-card-title>
+          <v-card-title>{{ track }}</v-card-title>
           <v-card-subtitle>TRACK</v-card-subtitle>
           <v-card-item>
-            <li v-for="el in Object.entries(telemetry.data.session[0])" :key="el">
-              {{ el[0] }}: {{ el[1] }}
-            </li>
+            {{ session }}
           </v-card-item>
         </v-card>
       </v-col>
@@ -59,7 +57,7 @@
 </template>
 
 <script lang="ts">
-import { telemetry } from '@/store'
+import { telemetry, sessionType } from '@/store'
 import { getLapTime, handleFiles, lapCountArray } from '@/index'
 import { defineComponent } from 'vue'
 
@@ -69,12 +67,23 @@ export default defineComponent({
       dialog: false,
       show: false,
       loading: false,
+      sessionType,
       telemetry
     }
   },
   computed: {
     fastestLap () {
       return getLapTime(telemetry.data.lap.at(-1).best_lap)
+    },
+    car () {
+      return (telemetry.data.session[0]?.car as string).toUpperCase().replaceAll('_', ' ')
+    },
+    track () {
+      const track = telemetry.data.session[0]?.track as string
+      return (track.startsWith('ks_') ? track.split('_')[1] : track).toUpperCase()
+    },
+    session () {
+      return sessionType[telemetry.data.session[0].session_type as keyof typeof sessionType]
     },
     lapCountArray
   },

@@ -36,6 +36,10 @@
       <v-col>
         <line-chart :chart-data="graphData()" :chart-options="{
           responsive: true,
+          scales: {
+            x: {
+            }
+          }
         }"></line-chart>
       </v-col>
     </v-row>
@@ -48,8 +52,6 @@ import { telemetry } from '@/store'
 import { getLapData, lapCountArray, getLapTime } from '..'
 import { defineComponent } from 'vue'
 import LineChart from '@/components/LineChart.vue'
-import { lab } from 'd3-color'
-import { index } from 'd3-array'
 
 export default defineComponent({
   props: ['id'],
@@ -83,7 +85,7 @@ export default defineComponent({
             label: 'Speed',
             pointRadius: 0,
             borderColor: '#EA7431',
-            tension: 0.1,
+            tension: 0.1
           }
         ]
       }
