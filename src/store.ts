@@ -3,7 +3,7 @@ import { reactive } from 'vue'
 export const telemetry = reactive({
   data: {
     car: [] as Array<any>,
-    session: [],
+    session: [] as Array<any>,
     lap: [] as Array<any>,
     tyre: [],
     input: []

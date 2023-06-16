@@ -14,13 +14,17 @@
         <v-card>
           <v-card-title>{{ telemetry.data.session[0]?.car }}</v-card-title>
           <v-card-subtitle>CAR</v-card-subtitle>
-          <v-card-item>{{ fastestLap }}</v-card-item>
+          <v-card-item>Best Lap: {{ fastestLap }}</v-card-item>
         </v-card>
         <br>
         <v-card>
           <v-card-title>{{ telemetry.data.session[0]?.track }}</v-card-title>
           <v-card-subtitle>TRACK</v-card-subtitle>
-          <v-card-item>Info goes here</v-card-item>
+          <v-card-item>
+            <li v-for="el in Object.entries(telemetry.data.session[0])" :key="el">
+              {{ el[0] }}: {{ el[1] }}
+            </li>
+          </v-card-item>
         </v-card>
       </v-col>
       <v-col cols="4">
@@ -70,7 +74,7 @@ export default defineComponent({
   },
   computed: {
     fastestLap () {
-      return telemetry.data.lap.at(-1).best_lap
+      return getLapTime(telemetry.data.lap.at(-1).best_lap)
     },
     lapCountArray
   },
