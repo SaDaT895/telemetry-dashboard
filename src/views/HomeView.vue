@@ -12,28 +12,30 @@
     <v-row v-if="telemetry.loaded()">
       <v-col cols="4">
         <v-card>
-          <v-card-title>{{ car }}</v-card-title>
-          <v-card-subtitle>CAR</v-card-subtitle>
-          <v-card-item>Best Lap: {{ fastestLap }}</v-card-item>
+          <v-card-item>
+              <v-card-title>{{ car }}</v-card-title>
+            <v-card-subtitle>CAR</v-card-subtitle>
+            <v-img src="@/assets/preview.jpg" alt="No Image found"></v-img>
+          </v-card-item>
+          <v-card-text>
+            Fastest Lap : {{ fastestLap[0] }} (Lap {{ fastestLap[1] }} )
+          </v-card-text>
         </v-card>
         <br>
-        <v-card>
-          <v-card-title>{{ track }}</v-card-title>
-          <v-card-subtitle>TRACK</v-card-subtitle>
-          <v-card-item>
-            {{ session }}
-          </v-card-item>
-        </v-card>
       </v-col>
       <v-col cols="4">
-        <v-img src="@/assets/preview.jpg" alt="No Image found"></v-img>
-        <br>
-        <v-img src="@/assets/map.png"></v-img>
+         <v-card>
+            <v-card-item>
+              <v-card-title>{{ track }}</v-card-title>
+              <v-card-subtitle>TRACK</v-card-subtitle>
+              <v-img src="@/assets/map.png"></v-img>
+            </v-card-item>
+          </v-card>
       </v-col>
       <v-col cols="4">
         <v-card v-for="lap in lapCountArray" :key="lap" class='my-5'>
           <v-card-title><router-link :to="`/lap/${lap}`"> Lap {{ lap }}</router-link></v-card-title>
-          <v-card-item>{{ telemetry.data.lap.findLast(e => e.lap_count === lap) }}</v-card-item>
+          <v-card-item>{{ getLapTime(telemetry.data.lap.findLast(e => e.lap_count === lap)?.current_lap) }}</v-card-item>
         </v-card>
       </v-col>
     </v-row>
@@ -58,7 +60,7 @@
 
 <script lang="ts">
 import { telemetry, sessionType } from '@/store'
-import { getLapTime, handleFiles, lapCountArray } from '@/index'
+import { getLapData, getLapTime, handleFiles, lapCountArray } from '@/index'
 import { defineComponent } from 'vue'
 
 export default defineComponent({
@@ -72,8 +74,11 @@ export default defineComponent({
     }
   },
   computed: {
+    lapCountArray,
     fastestLap () {
-      return getLapTime(telemetry.data.lap.at(-1).best_lap)
+      const allLaps = lapCountArray().map((i: number) => getLapData(i).at(-1)?.current_lap)
+      const fastest = Math.min(...allLaps)
+      return [getLapTime(fastest), allLaps.indexOf(fastest) + 1]
     },
     car () {
       return (telemetry.data.session[0]?.car as string).toUpperCase().replaceAll('_', ' ')
@@ -84,8 +89,7 @@ export default defineComponent({
     },
     session () {
       return sessionType[telemetry.data.session[0].session_type as keyof typeof sessionType]
-    },
-    lapCountArray
+    }
   },
   methods: {
     handleChange (event: Event) {

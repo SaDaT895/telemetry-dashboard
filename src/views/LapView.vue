@@ -16,8 +16,8 @@
       <v-col cols="3">
         <v-card>
           <v-card-item>
-            <v-img src="@/assets/map.png"></v-img>
-            <v-card-subtitle>INTERACTIVE TRACK MAP</v-card-subtitle>
+            <v-img src="@/assets/track.avif"></v-img>
+            <v-card-subtitle>TRACK MAP</v-card-subtitle>
           </v-card-item>
           <v-card-text>
             Time: {{ getLapTime(lapData.at(-1)?.current_lap) }}
@@ -28,19 +28,51 @@
             <br>
             Location: {{ lapData.at(-1)?.lap_position }}
             <br>
-            Valid: {{ (lapData.at(-1)?.invalid) === "False" }}
+            Valid: {{ invalid }}
           </v-card-text>
         </v-card>
       </v-col>
 
       <v-col>
-        <line-chart :chart-data="graphData()" :chart-options="{
-          responsive: true,
-          scales: {
-            x: {
+        <div style="height: 25vh;">
+          <line-chart :chart-data="speedData" :chart-options="{
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                beginAtZero: false,
+                ticks: {
+                  stepSize: 500,
+                  callback(tickValue, index, ticks) {
+                    const val = Number(this.getLabelForValue(tickValue as number))
+                    if (val % 500 === 0) return val + 'm'
+                  },
+                }
+              }
             }
-          }
-        }"></line-chart>
+          }"/>
+        </div>
+        <div style="height: 25vh;">
+           <line-chart :chart-data="gearData" :chart-options="{
+             responsive: true,
+             maintainAspectRatio: false,
+             scales: {
+               y: {
+                ticks: {
+                  stepSize: 1
+                }
+              },
+              x: {
+                ticks: {
+                   callback(tickValue, index, ticks) {
+                    const val = Number(this.getLabelForValue(tickValue as number))
+                    if (val % 500 === 0) return val + 'm'
+                  }
+                }
+              }
+             }
+           }"/>
+        </div>
       </v-col>
     </v-row>
 
@@ -52,6 +84,7 @@ import { telemetry } from '@/store'
 import { getLapData, lapCountArray, getLapTime } from '..'
 import { defineComponent } from 'vue'
 import LineChart from '@/components/LineChart.vue'
+import { ChartData } from 'chart.js'
 
 export default defineComponent({
   props: ['id'],
@@ -65,17 +98,15 @@ export default defineComponent({
       const lapNo = Number(this.id!)
       return getLapData(lapNo)
     },
-    lapCountArray
-  },
-  methods: {
-    getLapData,
-    getLapTime,
-    graphData () {
+    invalid () {
+      return this.lapData.at(-1)?.invalid
+    },
+    speedData () : ChartData {
       const startIdx = telemetry.data.car.findIndex(c => c.timestamp === this.lapData[0].timestamp)
-      const carData = telemetry.data.car.slice(startIdx, startIdx + this.lapData.length).map(c => c.speed)
-      const labels = this.lapData.map(v => Math.round(v.lap_position * telemetry.data.session[0].track_length) + 'm')
+      const endIdx = telemetry.data.car.findIndex(c => c.timestamp === this.lapData.at(-1).timestamp)
+      const carData = telemetry.data.car.slice(startIdx, endIdx).map(c => c.speed)
+      const labels = this.lapData.map(v => Math.round(v.lap_position * telemetry.data.session[0].track_length))
       const data = this.lapData.map((_, i) => carData[i])
-      console.log(labels)
       return {
         labels: labels,
         datasets: [
@@ -85,11 +116,39 @@ export default defineComponent({
             label: 'Speed',
             pointRadius: 0,
             borderColor: '#EA7431',
-            tension: 0.1
+            tension: 0.1,
+            borderWidth: 1.2
           }
         ]
       }
-    }
+    },
+    gearData () : ChartData {
+      const startIdx = telemetry.data.car.findIndex(c => c.timestamp === this.lapData[0].timestamp)
+      const endIdx = telemetry.data.car.findIndex(c => c.timestamp === this.lapData.at(-1).timestamp)
+      const carData = telemetry.data.car.slice(startIdx, endIdx).map(c => c.gear)
+      const labels = this.lapData.map(v => Math.round(v.lap_position * telemetry.data.session[0].track_length))
+      const data = this.lapData.map((_, i) => carData[i])
+      return {
+        labels: labels,
+        datasets: [
+          {
+            backgroundColor: '#EA7431',
+            data: data,
+            label: 'Gear',
+            pointRadius: 0,
+            borderColor: '#EA7431',
+            tension: 0,
+            spanGaps: true,
+            borderWidth: 1
+          }
+        ]
+      }
+    },
+    lapCountArray
+  },
+  methods: {
+    getLapData,
+    getLapTime
   },
   components: {
     LineChart
