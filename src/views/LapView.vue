@@ -49,6 +49,15 @@
                   },
                 }
               }
+            },
+            plugins: {
+              crosshair: {
+                sync: {
+                  enabled: true,
+                  group: 1,
+                  suppressTooltips: true
+                }
+              }
             }
           }"/>
         </div>
@@ -70,6 +79,17 @@
                   }
                 }
               }
+             },
+             plugins: {
+              crosshair: {
+                line: {
+                  color: 'white'
+                },
+                sync: {
+                  enabled: true,
+                  group: 1
+                }
+              }
              }
            }"/>
         </div>
@@ -85,6 +105,7 @@ import { getLapData, lapCountArray, getLapTime } from '..'
 import { defineComponent } from 'vue'
 import LineChart from '@/components/LineChart.vue'
 import { ChartData } from 'chart.js'
+import plugin from 'dayjs/plugin/duration'
 
 export default defineComponent({
   props: ['id'],
@@ -101,7 +122,7 @@ export default defineComponent({
     invalid () {
       return this.lapData.at(-1)?.invalid
     },
-    speedData () : ChartData {
+    speedData () : ChartData<'line'> {
       const startIdx = telemetry.data.car.findIndex(c => c.timestamp === this.lapData[0].timestamp)
       const endIdx = telemetry.data.car.findIndex(c => c.timestamp === this.lapData.at(-1).timestamp)
       const carData = telemetry.data.car.slice(startIdx, endIdx).map(c => c.speed)
@@ -122,7 +143,7 @@ export default defineComponent({
         ]
       }
     },
-    gearData () : ChartData {
+    gearData () : ChartData<'line'> {
       const startIdx = telemetry.data.car.findIndex(c => c.timestamp === this.lapData[0].timestamp)
       const endIdx = telemetry.data.car.findIndex(c => c.timestamp === this.lapData.at(-1).timestamp)
       const carData = telemetry.data.car.slice(startIdx, endIdx).map(c => c.gear)

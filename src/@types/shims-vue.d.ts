@@ -4,3 +4,5 @@ declare module '*.vue' {
   const component: DefineComponent<{}, {}, any>
   export default component
 }
+
+declare module 'chartjs-plugin-crosshair/dist/chartjs-plugin-crosshair.esm.js';
