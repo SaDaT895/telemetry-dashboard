@@ -34,129 +34,45 @@
       </v-col>
 
       <v-col>
-        <div style="height: 25vh;">
-          <line-chart :chart-data="speedData" :chart-options="{
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              x: {
-                ticks: {
-                  callback(tickValue, index, ticks) {
-                    const val = Number(this.getLabelForValue(tickValue as number))
-                    if (val % 500 === 0) return val + 'm'
-                  },
-                }
-              }
-            },
-            plugins: {
-              crosshair: {
-                line: {
-                  color: 'white'
-                },
-                sync: {
-                  enabled: false,
-                },
-                zoom: {
-                  enabled: false
-                }
-              }
-            }
-          }"/>
-        </div>
-        <div style="height: 25vh;" class="my-5">
-           <line-chart :chart-data="gearData" :chart-options="{
-             responsive: true,
-             maintainAspectRatio: false,
-             scales: {
-               y: {
-                ticks: {
-                  stepSize: 1
-                }
-              },
-              x: {
-                ticks: {
-                   callback(tickValue, index, ticks) {
-                    const val = Number(this.getLabelForValue(tickValue as number))
-                    if (val % 500 === 0) return val + 'm'
-                  }
-                }
-              }
-             },
-             plugins: {
-              crosshair: {
-                line: {
-                  color: 'white'
-                },
-                sync: {
-                  enabled: false,
-                },
-                zoom: {
-                  enabled: false
-                }
-              }
-             }
-           }"/>
-        </div>
-         <div style="height: 25vh;" class="my-5">
-             <line-chart :chart-data="revData" :chart-options="{
-               responsive: true,
-               maintainAspectRatio: false,
-               scales: {
-                 x: {
-                   ticks: {
-                     callback(tickValue, index, ticks) {
-                       const val = Number(this.getLabelForValue(tickValue as number))
-                       if (val % 500 === 0) return val + 'm'
-                     }
-                   }
-                 }
-               },
-               plugins: {
-                 crosshair: {
-                   line: {
-                     color: 'white'
-                   },
-                   sync: {
-                     enabled: false,
-                   },
-                   zoom: {
-                     enabled: false
-                   }
-                 },
-                 zoom: {
-                  pan: {
-                    enabled: true,
-                    mode: 'x',
-                    threshold: 10
-                  },
-                  zoom: {
-                    wheel: {
-                      enabled: true
-                    },
-                    mode: 'x'
-                  }
-                 }
-               }
-             }"/>
-          </div>
+        <v-tabs v-model="graphMode">
+          <v-tab value="basic">Basic</v-tab>
+          <v-tab value="perf">Performance</v-tab>
+          <v-tab value="tyres">Tyres</v-tab>
+          <v-btn>Custom</v-btn>
+        </v-tabs>
+
+        <v-window v-model="graphMode">
+          <v-window-item value="basic">
+            <basic-graphs :id="id"></basic-graphs>
+          </v-window-item>
+          <v-window-item value="perf">
+            <h1>Performance Stats go here</h1>
+          </v-window-item>
+          <v-window-item value="tyres">
+            <h1>Tyre Stats go here</h1>
+          </v-window-item>
+        </v-window>
+
       </v-col>
     </v-row>
-
   </v-container>
 </template>
 
 <script lang="ts">
 import { telemetry } from '@/store'
 import { getLapData, lapCountArray, getLapTime } from '..'
-import { defineComponent } from 'vue'
-import LineChart from '@/components/LineChart.vue'
+import { defineComponent, PropType } from 'vue'
 import { ChartData } from 'chart.js'
+import BasicGraphs from '@/components/BasicGraphs.vue'
 
 export default defineComponent({
-  props: ['id'],
+  props: {
+    id: { type: String, required: true }
+  },
   data () {
     return {
-      telemetry
+      telemetry,
+      graphMode: 'basic'
     }
   },
   computed: {
@@ -167,71 +83,6 @@ export default defineComponent({
     invalid () {
       return this.lapData.at(-1)?.invalid
     },
-    speedData () : ChartData<'line'> {
-      const startIdx = telemetry.data.car.findIndex(c => c.timestamp === this.lapData[0].timestamp)
-      const endIdx = telemetry.data.car.findIndex(c => c.timestamp === this.lapData.at(-1).timestamp)
-      const carData = telemetry.data.car.slice(startIdx, endIdx).map(c => Math.round(c.speed))
-      const labels = this.lapData.map(v => Math.round(v.lap_position * telemetry.data.session[0].track_length))
-      const data = this.lapData.map((_, i) => carData[i])
-      return {
-        labels: labels,
-        datasets: [
-          {
-            backgroundColor: '#EA7431',
-            data: data,
-            label: 'Speed',
-            pointRadius: 0,
-            borderColor: '#EA7431',
-            tension: 0.1,
-            borderWidth: 1
-          }
-        ]
-      }
-    },
-    gearData () : ChartData<'line'> {
-      const startIdx = telemetry.data.car.findIndex(c => c.timestamp === this.lapData[0].timestamp)
-      const endIdx = telemetry.data.car.findIndex(c => c.timestamp === this.lapData.at(-1).timestamp)
-      const carData = telemetry.data.car.slice(startIdx, endIdx).map(c => c.gear)
-      const labels = this.lapData.map(v => Math.round(v.lap_position * telemetry.data.session[0].track_length))
-      const data = this.lapData.map((_, i) => carData[i])
-      return {
-        labels: labels,
-        datasets: [
-          {
-            backgroundColor: '#EA7431',
-            data: data,
-            label: 'Gear',
-            pointRadius: 0,
-            borderColor: '#EA7431',
-            tension: 0,
-            spanGaps: true,
-            borderWidth: 1
-          }
-        ]
-      }
-    },
-    revData (): ChartData<'line'> {
-      const startIdx = telemetry.data.car.findIndex(c => c.timestamp === this.lapData[0].timestamp)
-      const endIdx = telemetry.data.car.findIndex(c => c.timestamp === this.lapData.at(-1).timestamp)
-      const carData = telemetry.data.car.slice(startIdx, endIdx).map(c => c.rpm)
-      const labels = this.lapData.map(v => Math.round(v.lap_position * telemetry.data.session[0].track_length))
-      const data = this.lapData.map((_, i) => carData[i])
-      return {
-        labels: labels,
-        datasets: [
-          {
-            backgroundColor: '#EA7431',
-            data: data,
-            label: 'RPM',
-            pointRadius: 0,
-            borderColor: '#EA7431',
-            tension: 0,
-            // spanGaps: true,
-            borderWidth: 1
-          }
-        ]
-      }
-    },
     lapCountArray
   },
   methods: {
@@ -239,7 +90,7 @@ export default defineComponent({
     getLapTime
   },
   components: {
-    LineChart
+    BasicGraphs
   }
 })
 </script>
