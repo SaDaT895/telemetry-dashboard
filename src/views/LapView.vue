@@ -40,9 +40,7 @@
             maintainAspectRatio: false,
             scales: {
               x: {
-                beginAtZero: false,
                 ticks: {
-                  stepSize: 500,
                   callback(tickValue, index, ticks) {
                     const val = Number(this.getLabelForValue(tickValue as number))
                     if (val % 500 === 0) return val + 'm'
@@ -52,16 +50,20 @@
             },
             plugins: {
               crosshair: {
+                line: {
+                  color: 'white'
+                },
                 sync: {
-                  enabled: true,
-                  group: 1,
-                  suppressTooltips: true
+                  enabled: false,
+                },
+                zoom: {
+                  enabled: false
                 }
               }
             }
           }"/>
         </div>
-        <div style="height: 25vh;">
+        <div style="height: 25vh;" class="my-5">
            <line-chart :chart-data="gearData" :chart-options="{
              responsive: true,
              maintainAspectRatio: false,
@@ -86,8 +88,10 @@
                   color: 'white'
                 },
                 sync: {
-                  enabled: true,
-                  group: 1
+                  enabled: false,
+                },
+                zoom: {
+                  enabled: false
                 }
               }
              }
@@ -125,7 +129,7 @@ export default defineComponent({
     speedData () : ChartData<'line'> {
       const startIdx = telemetry.data.car.findIndex(c => c.timestamp === this.lapData[0].timestamp)
       const endIdx = telemetry.data.car.findIndex(c => c.timestamp === this.lapData.at(-1).timestamp)
-      const carData = telemetry.data.car.slice(startIdx, endIdx).map(c => c.speed)
+      const carData = telemetry.data.car.slice(startIdx, endIdx).map(c => Math.round(c.speed))
       const labels = this.lapData.map(v => Math.round(v.lap_position * telemetry.data.session[0].track_length))
       const data = this.lapData.map((_, i) => carData[i])
       return {
@@ -138,7 +142,7 @@ export default defineComponent({
             pointRadius: 0,
             borderColor: '#EA7431',
             tension: 0.1,
-            borderWidth: 1.2
+            borderWidth: 1
           }
         ]
       }
