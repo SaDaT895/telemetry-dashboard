@@ -1,4 +1,4 @@
-import * as Chart from  'chart.js'
+import * as Chart from 'chart.js'
 
 export interface CrosshairOptions {
     line?: LineOptions | undefined;
@@ -42,12 +42,11 @@ export interface CallbackOptions {
     afterZoom?: ((start: number, end: number) => void) | undefined;
 }
 
-
 declare module 'chart.js' {
     interface PluginOptionsByType<TType extends ChartType> {
         crosshair?: CrosshairOptions | undefined;
     }
-    
+
     interface InteractionModeMap {
         interpolate: InteractionModeFunction;
     }
