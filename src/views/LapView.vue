@@ -34,16 +34,39 @@
       </v-col>
 
       <v-col>
-        <v-tabs v-model="graphMode">
-          <v-tab value="basic">Basic</v-tab>
-          <v-tab value="perf">Performance</v-tab>
-          <v-tab value="tyres">Tyres</v-tab>
-          <v-btn>Custom</v-btn>
-        </v-tabs>
+        <v-row>
+          <v-col>
+            <v-tabs v-model="graphMode">
+            <v-tab value="basic">Basic</v-tab>
+            <v-tab value="perf">Performance</v-tab>
+            <v-tab value="tyres">Tyres</v-tab>
+            <v-btn>Custom</v-btn>
+          </v-tabs>
+        </v-col>
+
+        <v-col class="text-right">
+          <v-btn>
+            Compare with
+            <v-menu activator='parent'>
+            <v-list>
+            <v-list-item
+              v-for="(item, index) in lapCountArray.filter(e => e !== Number(id))"
+              :key="index"
+              :value="item"
+              @click="overlayLap(item)"
+            >
+              <v-list-item-title>Lap {{ item }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+            </v-menu>
+          </v-btn>
+        </v-col>
+
+        </v-row>
 
         <v-window v-model="graphMode">
           <v-window-item value="basic">
-            <basic-graphs :id="id"></basic-graphs>
+            <basic-graphs :id='Number(id)' :overlay-id="overlay!==Number(id)?overlay: undefined"></basic-graphs>
           </v-window-item>
           <v-window-item value="perf">
             <performance-graphs :id="id"></performance-graphs>
@@ -72,12 +95,13 @@ export default defineComponent({
   data () {
     return {
       telemetry,
-      graphMode: 'basic'
+      graphMode: 'basic',
+      overlay: Number(this.id)
     }
   },
   computed: {
     lapData () {
-      const lapNo = Number(this.id!)
+      const lapNo = Number(this.id)
       return getLapData(lapNo)
     },
     invalid () {
@@ -87,7 +111,10 @@ export default defineComponent({
   },
   methods: {
     getLapData,
-    getLapTime
+    getLapTime,
+    overlayLap (lap: number) {
+      this.overlay = lap
+    }
   },
   components: {
     BasicGraphs,

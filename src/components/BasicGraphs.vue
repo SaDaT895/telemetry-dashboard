@@ -1,5 +1,6 @@
 <template>
     <div>
+      <p v-if="overlayId">Comparison with Lap {{ overlayId }}</p>
     <div style="height: 25vh;">
               <line-chart :chart-data="speedData" :chart-options="{
                   responsive: true,
@@ -9,6 +10,7 @@
                           ticks: {
                               callback(tickValue, index, ticks) {
                                   const val = Number(this.getLabelForValue(tickValue as number))
+                                  console.log(tickValue)
                                   if (val % 500 === 0) return val + 'm'
                               },
                           }
@@ -112,14 +114,17 @@
 
 <script lang="ts">
 import { telemetry } from '@/store'
-import { ChartData } from 'chart.js'
+import { ChartData, ChartDataset } from 'chart.js'
 import { defineComponent } from 'vue'
 import LineChart from '@/components/LineChart.vue'
 import { getLapData } from '..'
 
 export default defineComponent({
   name: 'BasicGraphs',
-  props: ['id'],
+  props: {
+    id: { type: Number, required: true },
+    overlayId: Number
+  },
   data () {
     return {
       telemetry,
@@ -134,8 +139,13 @@ export default defineComponent({
   },
   computed: {
     lapData () {
-      const lapNo = Number(this.id!)
+      const lapNo = this.id
       return getLapData(lapNo)
+    },
+    overlayLapData () {
+      if (!this.overlayId) return
+      const overlayLap = this.overlayId
+      return getLapData(overlayLap)
     },
     labels () {
       return this.lapData.map(v => Math.round(v.lap_position * telemetry.data.session[0].track_length))
@@ -144,15 +154,33 @@ export default defineComponent({
     endIdx () { return telemetry.data.car.findIndex(c => c.timestamp === this.lapData.at(-1).timestamp) },
     speedData (): ChartData<'line'> {
       const data = telemetry.data.car.slice(this.startIdx, this.endIdx).map(c => Math.round(c.speed))
+      const datasets: ChartDataset<'line'>[] = [
+        {
+          data: data,
+          label: 'Speed',
+          ...this.dataOptions
+        }
+
+      ]
+      if (this.overlayId) {
+        const start = telemetry.data.car.findIndex(c => c.timestamp === this.overlayLapData![0].timestamp)
+        const end = telemetry.data.car.findIndex(c => c.timestamp === this.overlayLapData!.at(-1).timestamp)
+        const carData = telemetry.data.car.slice(start, end).map(c => c.speed)
+        const overlayData = this.overlayLapData!.map((v, i) => {
+          return {
+            x: v.lap_position * telemetry.data.session[0].track_length,
+            y: carData[i]
+          }
+        })
+        datasets.push({
+          data: overlayData,
+          label: 'Speed' + this.overlayId,
+          ...this.dataOptions
+        })
+      }
       return {
         labels: this.labels,
-        datasets: [
-          {
-            data: data,
-            label: 'Speed',
-            ...this.dataOptions
-          }
-        ]
+        datasets: datasets
       }
     },
     gearData (): ChartData<'line'> {

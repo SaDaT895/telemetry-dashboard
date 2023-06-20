@@ -69,7 +69,7 @@ export default defineComponent({
     startIdx () { return telemetry.data.car.findIndex(c => c.timestamp === this.lapData[0].timestamp) },
     endIdx () { return telemetry.data.car.findIndex(c => c.timestamp === this.lapData.at(-1).timestamp) },
     throttleData () {
-      const data = telemetry.data.input.slice(this.startIdx, this.endIdx).map(i => i.gas)
+      const data = telemetry.data.input.slice(this.startIdx, this.endIdx).map(i => i.gas * 100)
       return {
         labels: this.labels,
         datasets: [
