@@ -90,10 +90,12 @@
                              }
                          },
                          zoom: {
+                          limits: {
+                            x: {min: 0}
+                          },
                              pan: {
                                  enabled: true,
                                  mode: 'x',
-                                 threshold: 10
                              },
                              zoom: {
                                  wheel: {
@@ -138,12 +140,10 @@ export default defineComponent({
     labels () {
       return this.lapData.map(v => Math.round(v.lap_position * telemetry.data.session[0].track_length))
     },
+    startIdx () { return telemetry.data.car.findIndex(c => c.timestamp === this.lapData[0].timestamp) },
+    endIdx () { return telemetry.data.car.findIndex(c => c.timestamp === this.lapData.at(-1).timestamp) },
     speedData (): ChartData<'line'> {
-      const startIdx = telemetry.data.car.findIndex(c => c.timestamp === this.lapData[0].timestamp)
-      const endIdx = telemetry.data.car.findIndex(c => c.timestamp === this.lapData.at(-1).timestamp)
-      const carData = telemetry.data.car.slice(startIdx, endIdx).map(c => Math.round(c.speed))
-
-      const data = this.lapData.map((_, i) => carData[i])
+      const data = telemetry.data.car.slice(this.startIdx, this.endIdx).map(c => Math.round(c.speed))
       return {
         labels: this.labels,
         datasets: [
@@ -156,10 +156,7 @@ export default defineComponent({
       }
     },
     gearData (): ChartData<'line'> {
-      const startIdx = telemetry.data.car.findIndex(c => c.timestamp === this.lapData[0].timestamp)
-      const endIdx = telemetry.data.car.findIndex(c => c.timestamp === this.lapData.at(-1).timestamp)
-      const carData = telemetry.data.car.slice(startIdx, endIdx).map(c => c.gear)
-      const data = this.lapData.map((_, i) => carData[i])
+      const data = telemetry.data.car.slice(this.startIdx, this.endIdx).map(c => c.gear)
       return {
         labels: this.labels,
         datasets: [
@@ -173,10 +170,7 @@ export default defineComponent({
       }
     },
     revData (): ChartData<'line'> {
-      const startIdx = telemetry.data.car.findIndex(c => c.timestamp === this.lapData[0].timestamp)
-      const endIdx = telemetry.data.car.findIndex(c => c.timestamp === this.lapData.at(-1).timestamp)
-      const carData = telemetry.data.car.slice(startIdx, endIdx).map(c => c.rpm)
-      const data = this.lapData.map((_, i) => carData[i])
+      const data = telemetry.data.car.slice(this.startIdx, this.endIdx).map(c => c.rpm)
       return {
         labels: this.labels,
         datasets: [

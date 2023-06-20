@@ -3,11 +3,11 @@
 </template>
 
 <script lang="ts">
-import { Chart, Line } from 'vue-chartjs'
+import { Line } from 'vue-chartjs'
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, PointElement, LineElement, ChartOptions, ChartData, Interaction } from 'chart.js'
-import { PropType } from 'vue'
 import { CrosshairPlugin, Interpolate } from 'chartjs-plugin-crosshair/dist/chartjs-plugin-crosshair.esm.js'
 import zoomPlugin from 'chartjs-plugin-zoom'
+import { PropType, defineComponent } from 'vue'
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, PointElement, LineElement, CrosshairPlugin, zoomPlugin)
 Interaction.modes.interpolate = Interpolate
@@ -17,7 +17,7 @@ ChartJS.defaults.plugins.tooltip.intersect = false
 // ChartJS.defaults.hover.intersect = false
 // ChartJS.defaults.hover.mode = 'point'
 
-export default {
+export default defineComponent({
   name: 'LineChart',
   components: { Line },
   props: {
@@ -29,5 +29,5 @@ export default {
       type: Object as PropType<ChartOptions<'line'> >
     }
   }
-}
+})
 </script>

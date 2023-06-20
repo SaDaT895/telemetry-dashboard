@@ -49,6 +49,5 @@ export const getLapTime = (time: number) => {
 }
 
 export const getLapData = (lap: number) => {
-  console.log(lap)
   return telemetry.data.lap.filter(v => v.lap_count === lap)
 }

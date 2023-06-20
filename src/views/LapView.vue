@@ -46,7 +46,7 @@
             <basic-graphs :id="id"></basic-graphs>
           </v-window-item>
           <v-window-item value="perf">
-            <h1>Performance Stats go here</h1>
+            <performance-graphs :id="id"></performance-graphs>
           </v-window-item>
           <v-window-item value="tyres">
             <h1>Tyre Stats go here</h1>
@@ -62,8 +62,8 @@
 import { telemetry } from '@/store'
 import { getLapData, lapCountArray, getLapTime } from '..'
 import { defineComponent, PropType } from 'vue'
-import { ChartData } from 'chart.js'
 import BasicGraphs from '@/components/BasicGraphs.vue'
+import PerformanceGraphs from '@/components/PerformanceGraphs.vue'
 
 export default defineComponent({
   props: {
@@ -90,7 +90,8 @@ export default defineComponent({
     getLapTime
   },
   components: {
-    BasicGraphs
+    BasicGraphs,
+    PerformanceGraphs
   }
 })
 </script>

@@ -6,7 +6,7 @@ export const telemetry = reactive({
     session: [] as Array<any>,
     lap: [] as Array<any>,
     tyre: [],
-    input: []
+    input: [] as Array<any>
   },
   loaded () {
     return Object.values(this.data).every((i) => { return i.length !== 0 })
