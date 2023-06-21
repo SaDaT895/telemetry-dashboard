@@ -10,7 +10,6 @@
                           ticks: {
                               callback(tickValue, index, ticks) {
                                   const val = Number(this.getLabelForValue(tickValue as number))
-                                  console.log(tickValue)
                                   if (val % 500 === 0) return val + 'm'
                               },
                           }
@@ -148,12 +147,19 @@ export default defineComponent({
       return getLapData(overlayLap)
     },
     labels () {
-      return this.lapData.map(v => Math.round(v.lap_position * telemetry.data.session[0].track_length))
+      const arr = Array.from({ length: telemetry.data.session[0].track_length + 1 }, (_, i) => i)
+      arr.push(...[0, 1, 2])
+      return arr
     },
     startIdx () { return telemetry.data.car.findIndex(c => c.timestamp === this.lapData[0].timestamp) },
     endIdx () { return telemetry.data.car.findIndex(c => c.timestamp === this.lapData.at(-1).timestamp) },
     speedData (): ChartData<'line'> {
-      const data = telemetry.data.car.slice(this.startIdx, this.endIdx).map(c => Math.round(c.speed))
+      const data = this.lapData.map(v => {
+        return {
+          x: Math.round(v.lap_position * telemetry.data.session[0].track_length),
+          y: telemetry.data.car.find(e => e.timestamp === v.timestamp).speed
+        }
+      })
       const datasets: ChartDataset<'line'>[] = [
         {
           data: data,
@@ -168,7 +174,7 @@ export default defineComponent({
         const carData = telemetry.data.car.slice(start, end).map(c => c.speed)
         const overlayData = this.overlayLapData!.map((v, i) => {
           return {
-            x: v.lap_position * telemetry.data.session[0].track_length,
+            x: Math.round(v.lap_position * telemetry.data.session[0].track_length),
             y: carData[i]
           }
         })
