@@ -20,7 +20,7 @@
                               color: 'white'
                           },
                           sync: {
-                              enabled: false,
+                            enabled: false
                           },
                           zoom: {
                               enabled: false
@@ -42,8 +42,7 @@
                        x: {
                            ticks: {
                                callback(tickValue, index, ticks) {
-                                   const val = Number(this.getLabelForValue(tickValue as number))
-                                   if (val % 500 === 0) return val + 'm'
+                                if (tickValue as number % 500 === 0) return tickValue + 'm'
                                }
                            }
                        }
@@ -54,7 +53,7 @@
                                color: 'white'
                            },
                            sync: {
-                               enabled: false,
+                            enabled: false,
                            },
                            zoom: {
                                enabled: false
@@ -71,8 +70,7 @@
                          x: {
                              ticks: {
                                  callback(tickValue, index, ticks) {
-                                     const val = Number(this.getLabelForValue(tickValue as number))
-                                     if (val % 500 === 0) return val + 'm'
+                                  if (tickValue as number % 500 === 0) return tickValue + 'm'
                                  }
                              }
                          }
@@ -131,7 +129,8 @@ export default defineComponent({
         pointRadius: 0,
         borderColor: '#EA7431',
         tension: 0.1,
-        borderWidth: 1
+        borderWidth: 1,
+        interpolate: true
       }
     }
   },
@@ -185,11 +184,10 @@ export default defineComponent({
         console.log(overlayData)
         datasets.push({
           data: overlayData,
-          label: 'Speed' + this.overlayId,
+          label: 'Speed ' + this.overlayId,
           ...this.dataOptions,
           backgroundColor: '#FF0000',
-          borderColor: '#FF0000',
-          interpolate: true
+          borderColor: '#FF0000'
         })
       }
       return {
@@ -198,7 +196,12 @@ export default defineComponent({
       }
     },
     gearData (): ChartData<'line'> {
-      const data = telemetry.data.car.slice(this.startIdx, this.endIdx).map(c => c.gear)
+      const data = this.carData.map((v, i) => {
+        return {
+          x: Math.round(this.lapData[i].lap_position * this.trackLength),
+          y: v.gear
+        }
+      })
       return {
         labels: this.labels,
         datasets: [
@@ -206,14 +209,18 @@ export default defineComponent({
             data: data,
             label: 'Gear',
             spanGaps: true,
-            ...this.dataOptions,
-            interpolate: true
+            ...this.dataOptions
           }
         ]
       }
     },
     revData (): ChartData<'line'> {
-      const data = telemetry.data.car.slice(this.startIdx, this.endIdx).map(c => c.rpm)
+      const data = this.carData.map((v, i) => {
+        return {
+          x: Math.round(this.lapData[i].lap_position * this.trackLength),
+          y: v.rpm
+        }
+      })
       return {
         labels: this.labels,
         datasets: [
