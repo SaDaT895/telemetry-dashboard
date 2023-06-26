@@ -113,7 +113,7 @@ import { telemetry } from '@/store'
 import { ChartData, ChartDataset } from 'chart.js'
 import { defineComponent } from 'vue'
 import LineChart from '@/components/LineChart.vue'
-import { getLapData } from '..'
+import { getLapData, labels, trackLength } from '..'
 
 export default defineComponent({
   name: 'BasicGraphs',
@@ -135,22 +135,16 @@ export default defineComponent({
     }
   },
   computed: {
+    labels,
+    trackLength,
     lapData () {
       const lapNo = this.id
       return getLapData(lapNo)
-    },
-    trackLength () {
-      return Math.round(telemetry.data.session[0].track_length)
     },
     overlayLapData () {
       if (!this.overlayId) return
       const overlayLap = this.overlayId
       return getLapData(overlayLap)
-    },
-    labels () {
-      const arr = Array.from({ length: this.trackLength + 1 }, (_, i) => i)
-      arr.push(...[0, 1, 2])
-      return arr
     },
     startIdx () { return telemetry.data.car.findIndex(c => c.timestamp === this.lapData[0].timestamp) },
     endIdx () { return telemetry.data.car.findIndex(c => c.timestamp === this.lapData.at(-1).timestamp) },

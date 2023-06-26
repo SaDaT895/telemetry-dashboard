@@ -39,7 +39,7 @@
 import { telemetry } from '@/store'
 import { defineComponent } from 'vue'
 import LineChart from './LineChart.vue'
-import { getLapData } from '..'
+import { getLapData, labels, trackLength } from '..'
 
 export default defineComponent({
   name: 'PerformanceGraphs',
@@ -59,12 +59,11 @@ export default defineComponent({
     }
   },
   computed: {
+    labels,
+    trackLength,
     lapData () {
       const lapNo = Number(this.id!)
       return getLapData(lapNo)
-    },
-    labels () {
-      return this.lapData.map(v => Math.round(v.lap_position * telemetry.data.session[0].track_length))
     },
     startIdx () { return telemetry.data.car.findIndex(c => c.timestamp === this.lapData[0].timestamp) },
     endIdx () { return telemetry.data.car.findIndex(c => c.timestamp === this.lapData.at(-1).timestamp) },

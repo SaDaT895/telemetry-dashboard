@@ -51,3 +51,13 @@ export const getLapTime = (time: number) => {
 export const getLapData = (lap: number) => {
   return telemetry.data.lap.filter(v => v.lap_count === lap)
 }
+
+export const labels = () => {
+  const arr = Array.from({ length: trackLength() + 1 }, (_, i) => i)
+  arr.push(...[0, 1, 2])
+  return arr
+}
+
+export const trackLength = () => {
+  return Math.round(telemetry.data.session[0].track_length)
+}
