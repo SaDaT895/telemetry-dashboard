@@ -47,7 +47,6 @@
             @change='handleChange'></v-file-input>
         </v-card-text>
         <v-card-actions>
-          <v-progress-circular v-if="loading && !telemetry.loaded()" indeterminate></v-progress-circular>
           <v-icon icon="mdi-check" v-if="telemetry.loaded()"></v-icon>
           <br>
           <v-btn v-if="telemetry.loaded()" color="primary" block @click='dialog=false'>Close Dialog</v-btn>

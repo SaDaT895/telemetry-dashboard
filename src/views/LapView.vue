@@ -22,12 +22,6 @@
           <v-card-text>
             Time: {{ getLapTime(lapData.at(-1)?.current_lap) }}
             <br>
-            Speed: {{ telemetry.data.car.find(v => v.timestamp === lapData.at(-1)?.timestamp)?.speed }}
-            <br>
-            Gear: {{ telemetry.data.car.find(v => v.timestamp === lapData.at(-1)?.timestamp)?.gear }}
-            <br>
-            Location: {{ lapData.at(-1)?.lap_position }}
-            <br>
             Valid: {{ invalid }}
           </v-card-text>
         </v-card>
