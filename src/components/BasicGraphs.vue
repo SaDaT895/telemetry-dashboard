@@ -9,8 +9,7 @@
                       x: {
                           ticks: {
                               callback(tickValue, index, ticks) {
-                                  const val = Number(this.getLabelForValue(tickValue as number))
-                                  if (val % 500 === 0) return val + 'm'
+                                  if (tickValue as number % 500 === 0) return tickValue + 'm'
                               },
                           }
                       }
@@ -168,7 +167,8 @@ export default defineComponent({
         {
           data: data,
           label: 'Speed',
-          ...this.dataOptions
+          ...this.dataOptions,
+          interpolate: true
         }
 
       ]
@@ -188,7 +188,8 @@ export default defineComponent({
           label: 'Speed' + this.overlayId,
           ...this.dataOptions,
           backgroundColor: '#FF0000',
-          borderColor: '#FF0000'
+          borderColor: '#FF0000',
+          interpolate: true
         })
       }
       return {
@@ -205,7 +206,8 @@ export default defineComponent({
             data: data,
             label: 'Gear',
             spanGaps: true,
-            ...this.dataOptions
+            ...this.dataOptions,
+            interpolate: true
           }
         ]
       }

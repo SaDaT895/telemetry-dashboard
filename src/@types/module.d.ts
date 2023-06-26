@@ -51,7 +51,7 @@ declare module 'chart.js' {
         interpolate: InteractionModeFunction;
     }
 
-    interface ChartDataSets {
+    interface ChartDatasetProperties<TType extends ChartType, TData> {
         interpolate?: boolean | undefined;
     }
 
