@@ -9,7 +9,7 @@
                     mode: 'index',
                     intersect: false
                   },
-                  onHover: (event, elements, chart) => {
+                  onClick: (event, elements, chart) => {
                     onHoverEmit(elements[0]?.element.$context.raw.timestamp)
                   },
                   scales: {
