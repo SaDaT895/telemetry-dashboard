@@ -5,7 +5,7 @@ export const telemetry = reactive({
     car: [] as Array<any>,
     session: [] as Array<any>,
     lap: [] as Array<any>,
-    tyre: [],
+    tyre: [] as Array<any>,
     input: [] as Array<any>
   },
   loaded () {
@@ -27,4 +27,11 @@ export const sessionType = {
   6: 'Drag',
   7: 'Hotstint',
   8: 'Hotstint Super Pole'
+}
+
+export const tyres = {
+  0: 'Front Left',
+  1: 'Front Right',
+  2: 'Rear Left',
+  3: 'Rear Right'
 }

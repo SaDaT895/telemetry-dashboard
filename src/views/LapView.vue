@@ -31,25 +31,29 @@
           </v-card-item>
           <v-card-text v-if="currentTimestamp">
             <v-row>
-              <v-list-item>
+              <v-col cols="4">
+                  <v-list-item>
                 <v-list-item-title>Time</v-list-item-title>{{ getLapTime(dynamicLapData.current_lap) }}
               </v-list-item>
+              </v-col>
               <v-list-item>
                 <v-list-item-title>Lap Percentage</v-list-item-title>{{ Math.round(dynamicLapData.lap_position * 1000) /
                   10 }}
               </v-list-item>
               <v-list-item>
-                <v-list-item-title>Speed</v-list-item-title>
+                <h3>Speed</h3>
                 {{ Math.round(dynamicCarData.speed) }}
               </v-list-item>
+              <v-col cols="4">
+                <v-list-item>
+                  <h3>Fuel (kgs)</h3> {{ Math.round(dynamicCarData.fuel * 100) / 100 }}
+                </v-list-item>
+              </v-col>
               <v-list-item>
-                <v-list-item-title>Fuel (in kgs)</v-list-item-title> {{ Math.round(dynamicCarData.fuel * 100) / 100 }}
+                <h3>Current Sector</h3> {{ dynamicLapData.current_sector + 1 }}
               </v-list-item>
               <v-list-item>
-                <v-list-item-title>Current Sector</v-list-item-title> {{ dynamicLapData.current_sector + 1 }}
-              </v-list-item>
-              <v-list-item>
-                <v-list-item-title>Delta</v-list-item-title>{{ Math.round(dynamicLapData.lap_delta * 1000) / 1000 }}
+                <h3>Delta</h3>{{ Math.round(dynamicLapData.lap_delta * 1000) / 1000 }}
               </v-list-item>
             </v-row>
           </v-card-text>
@@ -58,7 +62,16 @@
           <v-card-item>
             <v-card-subtitle>TYRES</v-card-subtitle>
             <v-card-text>
-              Tyre data goes here
+              <v-row>
+                <v-col v-for="(x, i) in tyres" :key="i" cols="6">
+                    <v-list-item >
+                    <h3>{{ x }}</h3>
+                    Temp: {{ Math.round(dynamicTyreData['core_temp' + i] * 10)/10}}&deg;C
+                    <br>
+                    Slip Angle: {{ Math.round(dynamicTyreData['slip_angle' + i] * 10)/10 }}&deg;
+                  </v-list-item>
+                </v-col>
+              </v-row>
             </v-card-text>
           </v-card-item>
         </v-card>
@@ -110,7 +123,7 @@
 </template>
 
 <script lang="ts">
-import { telemetry } from '@/store'
+import { telemetry, tyres } from '@/store'
 import { getLapData, lapCountArray, getLapTime } from '..'
 import { defineComponent, PropType } from 'vue'
 import BasicGraphs from '@/components/BasicGraphs.vue'
@@ -123,6 +136,7 @@ export default defineComponent({
   data () {
     return {
       telemetry,
+      tyres,
       graphMode: 'basic',
       overlay: Number(this.id),
       currentTimestamp: null
@@ -143,6 +157,10 @@ export default defineComponent({
     },
     dynamicCarData () {
       if (this.currentTimestamp) return telemetry.data.car.find(e => e.timestamp === this.currentTimestamp)
+      return null
+    },
+    dynamicTyreData () {
+      if (this.currentTimestamp) return telemetry.data.tyre.find(e => e.timestamp === this.currentTimestamp)
       return null
     }
   },
