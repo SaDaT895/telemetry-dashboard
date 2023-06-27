@@ -5,6 +5,13 @@
               <line-chart :chart-data="speedData" :chart-options="{
                   responsive: true,
                   maintainAspectRatio: false,
+                  hover: {
+                    mode: 'index',
+                    intersect: false
+                  },
+                  onHover: (event, elements, chart) => {
+                    onHoverEmit(elements[0]?.element.$context.raw.timestamp)
+                  },
                   scales: {
                       x: {
                           ticks: {
@@ -149,14 +156,15 @@ export default defineComponent({
     startIdx () { return telemetry.data.car.findIndex(c => c.timestamp === this.lapData[0].timestamp) },
     endIdx () { return telemetry.data.car.findIndex(c => c.timestamp === this.lapData.at(-1).timestamp) },
     carData () { return telemetry.data.car.slice(this.startIdx, this.endIdx + 1) },
-    speedData (): ChartData<'line'> {
+    speedData (): ChartData<'line', { x: number, y: number, timestamp: any }[]> {
       const data = this.carData.map((v, i) => {
         return {
           x: Math.round(this.lapData[i].lap_position * this.trackLength),
-          y: v.speed
+          y: Math.round(v.speed),
+          timestamp: v.timestamp
         }
       })
-      const datasets: ChartDataset<'line'>[] = [
+      const datasets: ChartDataset<'line', { x: number, y: number, timestamp: any }[]>[] = [
         {
           data: data,
           label: 'Speed',
@@ -172,7 +180,8 @@ export default defineComponent({
         const overlayData = this.overlayLapData!.map((v, i) => {
           return {
             x: Math.round(v.lap_position * this.trackLength),
-            y: carData[i]
+            y: carData[i],
+            timestamp: v.timestamp
           }
         })
         console.log(overlayData)
@@ -229,6 +238,11 @@ export default defineComponent({
   },
   components: {
     LineChart
+  },
+  methods: {
+    onHoverEmit (timestamp: any) {
+      this.$emit('graphhover', timestamp)
+    }
   }
 })
 </script>
