@@ -17,12 +17,13 @@
         <v-card>
           <v-card-item>
             <v-img src="@/assets/map.png"></v-img>
-            <v-card-subtitle>TRACK MAP</v-card-subtitle>
+            <v-card-subtitle>
+              <p v-if="invalid" class="text-error">INVALID LAP</p>
+              <p v-if="!invalid" class="text-green">VALID LAP</p>
+            </v-card-subtitle>
           </v-card-item>
           <v-card-text>
             Final Lap Time: {{ getLapTime(lapData.at(-1)?.current_lap) }}
-            <br>
-            Valid: {{ invalid }}
           </v-card-text>
         </v-card>
         <v-card>
@@ -61,7 +62,7 @@
         <v-card>
           <v-card-item>
             <v-card-subtitle>TYRES</v-card-subtitle>
-            <v-card-text>
+            <v-card-text v-if="currentTimestamp">
               <v-row>
                 <v-col v-for="(x, i) in tyres" :key="i" cols="6">
                     <v-list-item >
@@ -148,7 +149,7 @@ export default defineComponent({
       return getLapData(lapNo)
     },
     invalid () {
-      return this.lapData.at(-1)?.invalid
+      return this.lapData.at(-1)?.invalid === 'True'
     },
     lapCountArray,
     dynamicLapData () {
