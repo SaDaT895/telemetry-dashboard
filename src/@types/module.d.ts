@@ -1,13 +1,5 @@
 import * as Chart from 'chart.js'
 
-export interface CrosshairOptions {
-    line?: LineOptions | undefined;
-    sync?: SyncOptions | undefined;
-    zoom?: ZoomOptions | undefined;
-    snap?: SnapOptions | undefined;
-    callbacks?: CallbackOptions | undefined;
-}
-
 /** https://chartjs-plugin-crosshair.netlify.app/options.html#crosshair-line-options */
 export interface LineOptions {
     color?: string | undefined;
@@ -40,6 +32,13 @@ export interface SnapOptions {
 export interface CallbackOptions {
     beforeZoom?: ((start: number, end: number) => boolean) | undefined;
     afterZoom?: ((start: number, end: number) => void) | undefined;
+}
+export interface CrosshairOptions {
+    line?: LineOptions | undefined;
+    sync?: SyncOptions | undefined;
+    zoom?: ZoomOptions | undefined;
+    snap?: SnapOptions | undefined;
+    callbacks?: CallbackOptions | undefined;
 }
 
 declare module 'chart.js' {

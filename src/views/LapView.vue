@@ -175,6 +175,21 @@ export default defineComponent({
   components: {
     BasicGraphs,
     PerformanceGraphs
+  },
+  beforeRouteEnter (to, from) {
+    // next(vm => {
+    //   const id = Number(JSON.parse(JSON.stringify(vm.$props)).id)
+    //   if (!telemetry.loaded() || !lapCountArray().includes(id)) {
+    //     console.log(id)
+    //     vm.$router.push('/')
+    //   }
+    // })
+    const id = Number(to.params.id)
+    if (!telemetry.loaded() || !lapCountArray().includes(id)) {
+      alert('Upload Data again')
+      return { path: '/' }
+    }
+    return true
   }
 })
 </script>
