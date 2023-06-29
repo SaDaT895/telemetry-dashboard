@@ -15,28 +15,65 @@
           <v-card-item>
               <v-card-title>{{ car }}</v-card-title>
             <v-card-subtitle>CAR</v-card-subtitle>
-            <v-img src="@/assets/preview.jpg" alt="No Image found"></v-img>
+            <v-img src="@/assets/preview.jpg" height="30vh"></v-img>
           </v-card-item>
           <v-card-text>
-            Fastest Lap : {{ fastestLap[0] }} (Lap {{ fastestLap[1] }} )
+            <v-row>
+              <v-col cols="4">
+              <v-list-item>
+                <h2>Session Type</h2>
+                {{ session }}
+              </v-list-item>
+              </v-col>
+              <v-col>
+                  <v-list-item>
+                    <h2>Best Lap </h2>
+                    {{ fastestLap[0] }} (Lap {{ fastestLap[1] }})
+                  </v-list-item>
+              </v-col>
+              <v-col>
+                <v-list-item>
+                  <h2>Force Feedback</h2>
+                  {{ sessionData.ffb }}
+                </v-list-item>
+              </v-col>
+            </v-row>
           </v-card-text>
         </v-card>
         <br>
-      </v-col>
-      <v-col cols="4">
          <v-card>
             <v-card-item>
               <v-card-title>{{ track }}</v-card-title>
               <v-card-subtitle>TRACK</v-card-subtitle>
-              <v-img src="@/assets/map.png"></v-img>
+              <v-img src="@/assets/map.png" height="30vh"></v-img>
             </v-card-item>
+            <v-card-text>
+              <v-row>
+                <v-col cols="4">
+                  <h2>Track Length</h2>
+                  {{ Math.round(sessionData.track_length * 100) /100 }}
+                </v-col>
+                <v-col>
+                  <h2>Track Temp</h2>
+                  {{ sessionData.track_temp }}
+                </v-col>
+                <v-col>
+                  <h2>Air Temp</h2>
+                  {{ sessionData.air_temp }}
+                </v-col>
+              </v-row>
+            </v-card-text>
           </v-card>
       </v-col>
-      <v-col cols="4">
-        <v-card v-for="lap in lapCountArray" :key="lap" class='my-5'>
-          <v-card-title><router-link :to="`/lap/${lap}`"> Lap {{ lap }}</router-link></v-card-title>
-          <v-card-item>{{ getLapTime(telemetry.data.lap.findLast(e => e.lap_count === lap)?.current_lap) }}</v-card-item>
-        </v-card>
+      <v-col>
+        <v-row>
+          <v-col v-for="lap in lapCountArray" :key="lap" cols="6">
+              <v-card>
+              <v-card-title><router-link :to="`/lap/${lap}`"> Lap {{ lap }}</router-link></v-card-title>
+              <v-card-item>{{ getLapTime(telemetry.data.lap.findLast(e => e.lap_count === lap)?.current_lap) }}</v-card-item>
+            </v-card>
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
 
@@ -89,6 +126,9 @@ export default defineComponent({
     },
     session () {
       return sessionType[telemetry.data.session[0].session_type as keyof typeof sessionType]
+    },
+    sessionData () {
+      return telemetry.data.session[0]
     }
   },
   methods: {

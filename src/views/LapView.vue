@@ -111,7 +111,7 @@
               @graphhover='(val) => currentTimestamp = val' />
           </v-window-item>
           <v-window-item value="perf">
-            <performance-graphs :id="id"></performance-graphs>
+            <performance-graphs :id="id"  @graphclick='(val) => currentTimestamp = val'></performance-graphs>
           </v-window-item>
           <v-window-item value="tyres">
             <h1>Tyre Stats go here</h1>
@@ -177,16 +177,9 @@ export default defineComponent({
     PerformanceGraphs
   },
   beforeRouteEnter (to, from) {
-    // next(vm => {
-    //   const id = Number(JSON.parse(JSON.stringify(vm.$props)).id)
-    //   if (!telemetry.loaded() || !lapCountArray().includes(id)) {
-    //     console.log(id)
-    //     vm.$router.push('/')
-    //   }
-    // })
     const id = Number(to.params.id)
     if (!telemetry.loaded() || !lapCountArray().includes(id)) {
-      alert('Upload Data again')
+      alert('No Data found')
       return { path: '/' }
     }
     return true
