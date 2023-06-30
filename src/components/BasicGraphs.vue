@@ -40,6 +40,13 @@
       <line-chart :chart-data="gearData" :chart-options="{
         responsive: true,
         maintainAspectRatio: false,
+         hover: {
+          mode: 'index',
+          intersect: false
+        },
+          onClick: (event, elements, chart) => {
+          onHoverEmit(elements[0]?.element.$context.raw.timestamp)
+        },
         scales: {
           y: {
             ticks: {
@@ -73,6 +80,13 @@
       <line-chart :chart-data="revData" :chart-options="{
         responsive: true,
         maintainAspectRatio: false,
+         hover: {
+          mode: 'index',
+          intersect: false
+        },
+         onClick: (event, elements, chart) => {
+          onHoverEmit(elements[0]?.element.$context.raw.timestamp)
+        },
         scales: {
           x: {
             ticks: {
@@ -201,7 +215,8 @@ export default defineComponent({
       const data = this.carData.map((v, i) => {
         return {
           x: Math.round(this.lapData[i].lap_position * this.trackLength),
-          y: v.gear
+          y: v.gear,
+          timestamp: v.timestamp
         }
       })
       const datasets: ChartDataset<'line'>[] = [
@@ -220,7 +235,8 @@ export default defineComponent({
         const overlayData = this.overlayLapData!.map((v, i) => {
           return {
             x: Math.round(v.lap_position * this.trackLength),
-            y: carData[i]
+            y: carData[i],
+            timestamp: v.timestamp
           }
         })
         datasets.push({
@@ -241,7 +257,8 @@ export default defineComponent({
       const data = this.carData.map((v, i) => {
         return {
           x: Math.round(this.lapData[i].lap_position * this.trackLength),
-          y: v.rpm
+          y: v.rpm,
+          timestamp: v.timestamp
         }
       })
       const datasets: ChartDataset<'line'>[] = [
@@ -259,7 +276,8 @@ export default defineComponent({
         const overlayData = this.overlayLapData!.map((v, i) => {
           return {
             x: Math.round(v.lap_position * this.trackLength),
-            y: carData[i]
+            y: carData[i],
+            timestamp: v.timestamp
           }
         })
         datasets.push({
@@ -281,6 +299,7 @@ export default defineComponent({
   },
   methods: {
     onHoverEmit (timestamp: any) {
+      console.log(timestamp)
       this.$emit('graphhover', timestamp)
     },
     getLapTime

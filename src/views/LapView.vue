@@ -89,18 +89,20 @@
             </v-tabs>
           </v-col>
 
-          <v-col class="text-right">
+          <v-col class="text-right" cols="2">
             <v-btn>
               Compare with
               <v-menu activator='parent'>
                 <v-list>
                   <v-list-item v-for="(item, index) in lapCountArray.filter(e => e !== Number(id))" :key="index"
-                    :value="item" @click="overlayLap(item)">
+                    :value="item" @click="overlayLap(item)" :class="overlay === item ? 'text-warning': ''">
                     <v-list-item-title>Lap {{ item }}</v-list-item-title>
                   </v-list-item>
                 </v-list>
               </v-menu>
             </v-btn>
+            <!-- <v-select label="Compare with" :items="lapCountArray" @>
+            </v-select> -->
           </v-col>
 
         </v-row>
@@ -111,10 +113,10 @@
               @graphhover='(val) => currentTimestamp = val' />
           </v-window-item>
           <v-window-item value="perf">
-            <performance-graphs :id="id"  @graphclick='(val) => currentTimestamp = val'></performance-graphs>
+            <performance-graphs :id="Number(id)" :overlay-id="overlay !== Number(id) ? overlay : undefined"  @graphclick='(val) => currentTimestamp = val'></performance-graphs>
           </v-window-item>
           <v-window-item value="tyres">
-            <h1>Tyre Stats go here</h1>
+            <h1>Tyre Stats go here. Not implemented</h1>
           </v-window-item>
         </v-window>
 
@@ -169,7 +171,8 @@ export default defineComponent({
     getLapData,
     getLapTime,
     overlayLap (lap: number) {
-      this.overlay = lap
+      if (this.overlay === lap) this.overlay = Number(this.id)
+      else this.overlay = lap
     }
   },
   components: {

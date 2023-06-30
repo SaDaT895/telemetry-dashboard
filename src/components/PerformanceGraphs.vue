@@ -1,5 +1,6 @@
 <template>
     <div>
+    <h3 v-if="overlayId">Comparison with Lap {{ overlayId }} ({{ getLapTime(telemetry.data.lap.findLast(e => e.lap_count === overlayId)?.current_lap) }})</h3>
         <div style="height: 25vh;">
             <line-chart :chart-data="throttleData" :chart-options='chartOptions'></line-chart>
         </div>
@@ -28,13 +29,14 @@
 import { telemetry } from '@/store'
 import { defineComponent } from 'vue'
 import LineChart from './LineChart.vue'
-import { getLapData, labels, trackLength } from '..'
+import { getLapData, labels, trackLength, getLapTime } from '..'
 import { ChartDataset, ChartOptions, ChartData } from 'chart.js'
 
 export default defineComponent({
   name: 'PerformanceGraphs',
   props: {
-    id: { type: String }
+    id: { type: Number, required: true },
+    overlayId: Number
   },
   data () {
     return {
@@ -106,6 +108,11 @@ export default defineComponent({
       const lapNo = Number(this.id!)
       return getLapData(lapNo)
     },
+    overlayLapData () {
+      if (!this.overlayId) return
+      const overlayLap = this.overlayId
+      return getLapData(overlayLap)
+    },
     startIdx () { return telemetry.data.input.findIndex(c => c.timestamp === this.lapData[0].timestamp) },
     endIdx () { return telemetry.data.input.findIndex(c => c.timestamp === this.lapData.at(-1).timestamp) },
     inputData () { return telemetry.data.input.slice(this.startIdx, this.endIdx + 1) },
@@ -124,6 +131,25 @@ export default defineComponent({
           ...this.dataOptions
         }
       ]
+      if (this.overlayId) {
+        const start = telemetry.data.input.findIndex(c => c.timestamp === this.overlayLapData![0].timestamp)
+        const end = telemetry.data.input.findIndex(c => c.timestamp === this.overlayLapData!.at(-1).timestamp)
+        const inputData = telemetry.data.input.slice(start, end + 1).map(c => c.gas)
+        const overlayData = this.overlayLapData!.map((v, i) => {
+          return {
+            x: Math.round(v.lap_position * this.trackLength),
+            y: inputData[i] * 100,
+            timestamp: v.timestamp
+          }
+        })
+        datasets.push({
+          data: overlayData,
+          label: 'Brake% ' + this.overlayId,
+          ...this.dataOptions,
+          backgroundColor: '#FF0000',
+          borderColor: '#FF0000'
+        })
+      }
       return {
         labels: this.labels,
         datasets: datasets
@@ -144,6 +170,25 @@ export default defineComponent({
           ...this.dataOptions
         }
       ]
+      if (this.overlayId) {
+        const start = telemetry.data.input.findIndex(c => c.timestamp === this.overlayLapData![0].timestamp)
+        const end = telemetry.data.input.findIndex(c => c.timestamp === this.overlayLapData!.at(-1).timestamp)
+        const inputData = telemetry.data.input.slice(start, end + 1).map(c => c.brake)
+        const overlayData = this.overlayLapData!.map((v, i) => {
+          return {
+            x: Math.round(v.lap_position * this.trackLength),
+            y: inputData[i] * 100,
+            timestamp: v.timestamp
+          }
+        })
+        datasets.push({
+          data: overlayData,
+          label: 'Brake% ' + this.overlayId,
+          ...this.dataOptions,
+          backgroundColor: '#FF0000',
+          borderColor: '#FF0000'
+        })
+      }
       return {
         labels: this.labels,
         datasets: datasets
@@ -164,6 +209,25 @@ export default defineComponent({
           ...this.dataOptions
         }
       ]
+      if (this.overlayId) {
+        const start = telemetry.data.input.findIndex(c => c.timestamp === this.overlayLapData![0].timestamp)
+        const end = telemetry.data.input.findIndex(c => c.timestamp === this.overlayLapData!.at(-1).timestamp)
+        const inputData = telemetry.data.input.slice(start, end + 1).map(c => c.steer)
+        const overlayData = this.overlayLapData!.map((v, i) => {
+          return {
+            x: Math.round(v.lap_position * this.trackLength),
+            y: inputData[i],
+            timestamp: v.timestamp
+          }
+        })
+        datasets.push({
+          data: overlayData,
+          label: 'Brake% ' + this.overlayId,
+          ...this.dataOptions,
+          backgroundColor: '#FF0000',
+          borderColor: '#FF0000'
+        })
+      }
       return {
         labels: this.labels,
         datasets: datasets
@@ -176,7 +240,8 @@ export default defineComponent({
   methods: {
     onHoverEmit (timestamp: any) {
       this.$emit('graphclick', timestamp)
-    }
+    },
+    getLapTime
   }
 })
 

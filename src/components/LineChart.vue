@@ -13,7 +13,7 @@ ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale,
 Interaction.modes.interpolate = Interpolate
 ChartJS.defaults.plugins.tooltip.mode = 'interpolate'
 ChartJS.defaults.plugins.tooltip.intersect = false
-ChartJS.defaults.plugins.tooltip.callbacks.title = (tooltipItems: TooltipItem<keyof ChartTypeRegistry>[]) => { return tooltipItems[0].element.x + '' }
+ChartJS.defaults.plugins.tooltip.callbacks.title = (tooltipItems: TooltipItem<keyof ChartTypeRegistry>[]) => { return tooltipItems[0].element.x + 'm' }
 ChartJS.defaults.plugins.tooltip.callbacks.label = (tooltipItem: TooltipItem<keyof ChartTypeRegistry>) => {
   return (tooltipItem.chart.data.datasets[tooltipItem.datasetIndex].label + ': ' + tooltipItem.element.y.toFixed(0))
 }
