@@ -144,7 +144,7 @@ export default defineComponent({
         })
         datasets.push({
           data: overlayData,
-          label: 'Brake% ' + this.overlayId,
+          label: 'Throttle% ' + this.overlayId,
           ...this.dataOptions,
           backgroundColor: '#FF0000',
           borderColor: '#FF0000'
@@ -222,7 +222,7 @@ export default defineComponent({
         })
         datasets.push({
           data: overlayData,
-          label: 'Brake% ' + this.overlayId,
+          label: 'Steering Angle ' + this.overlayId,
           ...this.dataOptions,
           backgroundColor: '#FF0000',
           borderColor: '#FF0000'

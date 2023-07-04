@@ -32,6 +32,21 @@
             zoom: {
               enabled: false
             }
+          },
+           zoom: {
+            limits: {
+              x: { min: 0 }
+            },
+            pan: {
+              enabled: true,
+              mode: 'x',
+            },
+            zoom: {
+              wheel: {
+                enabled: true
+              },
+              mode: 'x'
+            }
           }
         }
       }" />
@@ -71,6 +86,21 @@
             },
             zoom: {
               enabled: false
+            }
+          },
+           zoom: {
+            limits: {
+              x: { min: 0 }
+            },
+            pan: {
+              enabled: true,
+              mode: 'x',
+            },
+            zoom: {
+              wheel: {
+                enabled: true
+              },
+              mode: 'x'
             }
           }
         }
