@@ -3,22 +3,8 @@
 ## Project setup
 ```
 npm install
+vue serve
 ```
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+# Information
+This project is part of my Bachelor's research project. It's based around visualising telemetry data from Assetto Corsa.
