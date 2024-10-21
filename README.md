@@ -7,7 +7,7 @@ vue serve
 ```
 
 # Information
-This project is part of my Bachelor's research project. It's based around visualising telemetry data from Assetto Corsa.
+This project is part of my Bachelor's research project: https://essay.utwente.nl/95989/1/Ahmad_BA_EEMCS.pdf. It's based around visualising telemetry data from Assetto Corsa.
 
 Home-view:
 
